@@ -34,51 +34,61 @@ type finance struct {
 }
 
 func readInput() string {
-	//to manage problem with input with spaces
+	// to manage problem with input with spaces
 	reader := bufio.NewReader(os.Stdin)
 	input, _ := reader.ReadString('\n')
 	return strings.TrimSpace(input)
 }
 
 func menu() {
-	fmt.Println("1. Add Details")
-	fmt.Println("2. Add Another bank")
-	fmt.Println("3. Display Details")
-	fmt.Println("4. Update Balance")
-	fmt.Println("5. Exit")
+	fmt.Printf("\n")
+	fmt.Println(" [1] Add Details ")
+	fmt.Println(" [2] Add Another bank ")
+	fmt.Println(" [3] Display Details ")
+	fmt.Println(" [4] Update Balance ")
+	fmt.Println(" [5] Exit ")
 }
 
 func main() {
-
-	//variables
-	var choice int
+	// variables
+	var choice, ran int
 	var search string
 	var c client
 	var newBalance float64
 
-	//function to show menu
-	for { //to mimic do while loop
+	// function to show menu
+	for { // to mimic do while loop
 		menu()
 		fmt.Print("\nEnter your choice (1/2/3/4/5) : ")
 		fmt.Scan(&choice)
 
-		//switch case for the menu
+		// switch case for the menu
 		switch choice {
 		case 1:
 			if c.name == "" {
 				fmt.Println("Enter your name : ")
 				c.name = readInput()
-				fmt.Println("Enter your age : ")
-				fmt.Scanln(&c.age)
+				for {
+					fmt.Println("Enter your age : ")
+					fmt.Scanln(&c.age)
+					if c.age > 0 {
+						break
+					}
+				}
 				fmt.Println("Describe your job role : ")
 				c.job = readInput()
 				fmt.Println("Enter your Bank name : ")
 				c.finances[0].bankName = readInput()
-				fmt.Println("Enter your current balance : ")
-				fmt.Scanln(&c.finances[0].balance)
+				for {
+					fmt.Println("Enter your current balance : ")
+					fmt.Scanln(&c.finances[0].balance)
+					if c.finances[0].balance > 0 {
+						break
+					}
+				}
 				fmt.Println("Enter your Account Type : ")
 				c.finances[0].accountType = readInput()
-				c.numberofbanks = 1
+				c.numberofbanks++
 			} else {
 				fmt.Println("Your data is already present!")
 			}
@@ -102,14 +112,20 @@ func main() {
 			fmt.Printf("\n %v", c.name)
 			fmt.Printf("\n \t-%v", c.age)
 			fmt.Printf("\n \t-%v", c.job)
-			fmt.Printf("\n You have %v banks entries", c.numberofbanks)
-			fmt.Println("Enter the name of bank name (press def for default) :")
+			fmt.Printf("\n * You have %v banks entries\n", c.numberofbanks)
+			fmt.Println("\nEnter the name of bank name (press d for default) :")
 			fmt.Scanln(&search)
-			fmt.Println("================================")
-			if search == "def" {
+			fmt.Println("\n| Bank Name | Account Type | Balance |")
+			fmt.Printf("========================================\n")
+			if search == "d" || search == "D" {
 				sliced := c.finances[0:3]
-				for i := 0; i < 3; i++ {
-					fmt.Printf("\n| %v           | %v             | %v                 |", sliced[i].bankName, sliced[i].accountType, sliced[i].balance)
+				if c.numberofbanks >= 3 {
+					ran = 3
+				} else {
+					ran = c.numberofbanks
+				}
+				for i := 0; i < ran; i++ {
+					fmt.Printf("| %v | %v | %v |\n", sliced[i].bankName, sliced[i].accountType, sliced[i].balance)
 				}
 			} else {
 				for i := 0; i < c.numberofbanks; i++ {
@@ -122,11 +138,11 @@ func main() {
 			}
 
 		case 4:
-			fmt.Println("Enter bank name  :")
+			fmt.Println("\nEnter bank name  :")
 			search = readInput()
 			for i := 0; i < c.numberofbanks; i++ {
 				if c.finances[i].bankName == search {
-					fmt.Println("Enter Balance : ")
+					fmt.Println("\nEnter Balance : ")
 					fmt.Scan(&newBalance)
 					c.finances[i].balance = newBalance
 				}
@@ -135,5 +151,4 @@ func main() {
 			return
 		}
 	}
-
 }
